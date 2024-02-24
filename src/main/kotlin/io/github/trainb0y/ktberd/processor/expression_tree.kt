@@ -1,4 +1,10 @@
-package io.github.trainb0y.ktberd
+package io.github.trainb0y.ktberd.processor
+
+import io.github.trainb0y.ktberd.NonFormattedError
+import io.github.trainb0y.ktberd.OperatorType
+import io.github.trainb0y.ktberd.Token
+import io.github.trainb0y.ktberd.TokenType
+import io.github.trainb0y.ktberd.raiseErrorAtToken
 
 abstract class ExpressionTreeNode {
 	abstract fun toStr(tabs: Int = 0): String // todo: kinda un-kotliny
@@ -119,7 +125,7 @@ fun buildExpressionTree(filename: String, tokens: List<Token>, code: String): Ex
 	val startsWithWhitespace = tokens.first().type == TokenType.WHITESPACE
 	val endsWithWhitespace = tokens.last().type == TokenType.WHITESPACE
 
-	val updatedList = tokens.map{OperatorType.of(it.value) }
+	val updatedList = tokens.map{ OperatorType.of(it.value) }
 	var maxWidth = -1
 	var maxIndex = -1
 	var bracketLayers = 0
@@ -135,7 +141,8 @@ fun buildExpressionTree(filename: String, tokens: List<Token>, code: String): Ex
 				// bad bad bad! (negative sign check)
 				if (i == 0 || tokens[i - 1].type == TokenType.WHITESPACE &&
 					tokens[i+1].type != TokenType.WHITESPACE &&
-					updatedList[i] == OperatorType.SUB) continue
+					updatedList[i] == OperatorType.SUB
+				) continue
 
 				var lLen = 0;
 				var rLen = 0;
@@ -165,7 +172,13 @@ fun buildExpressionTree(filename: String, tokens: List<Token>, code: String): Ex
 	if (tokens.size >= 3 + firstNameIndex &&
 		tokens[firstNameIndex].type == TokenType.NAME &&
 		tokens[firstNameIndex + 1].type == TokenType.WHITESPACE &&
-		tokens[firstNameIndex + 2].type in arrayOf(TokenType.NAME, TokenType.L_SQUARE, TokenType.STRING, TokenType.SUBTRACT, TokenType.SEMICOLON) &&
+		tokens[firstNameIndex + 2].type in arrayOf(
+			TokenType.NAME,
+			TokenType.L_SQUARE,
+			TokenType.STRING,
+			TokenType.SUBTRACT,
+			TokenType.SEMICOLON
+		) &&
 		tokens[firstNameIndex + 1].value.length > maxWidth) {
 			val functionNode = FunctionNode(
 				tokens[firstNameIndex],
