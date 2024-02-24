@@ -22,6 +22,7 @@ enum class OperatorType(val value: String) {
 	NEEE(";===");
 
 	companion object {
-		fun of(value: String): OperatorType? = OperatorType.entries.find { it.value == value }
+		val stringToOperator: Map<String, OperatorType> = entries.associateBy { it.value }
+		fun of(value: String): OperatorType? = stringToOperator[value]
 	}
 }
