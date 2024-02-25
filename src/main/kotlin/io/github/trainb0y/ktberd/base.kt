@@ -1,5 +1,7 @@
 package io.github.trainb0y.ktberd
 
+var alphNums = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_."
+
 class NonFormattedError(str: String?=null): Exception(str)
 class InterpretationError(str: String?=null): Exception(str)
 
@@ -40,6 +42,21 @@ fun raiseErrorAtToken(filename: String, code: String, message: String, token: To
 		""".trimIndent()
 	)
 }
+
+fun raiseErrorAtLine(filename: String, code: String, line: Int, message: String) {
+	if (code.isEmpty()) {
+		throw InterpretationError(message)
+	}
+
+	throw InterpretationError("""
+		$filename, line ${line}\n\n" + 
+		${code.split("\n")[line - 1]}\n" + \
+		$message
+		""".trimIndent()
+	)
+}
+
+
 
 enum class TokenType(val value: String) {
 	R_CURLY("}"),
